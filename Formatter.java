@@ -200,7 +200,7 @@ public class Formatter extends JFrame implements ActionListener {
 		gbTop.setConstraints( btFormat, gbcTop );
 		pnTop.add( btFormat );
 
-		statusText = "Select Input File";
+		statusText = "Open Input File";
 		tfStatus = new JTextField( );
 		tfStatus.setBackground( new Color( 240,240,240 ) );
 		tfStatus.setEditable( false );
@@ -299,8 +299,6 @@ public class Formatter extends JFrame implements ActionListener {
 
 	public void run()
 	{
-		System.out.println("start");
-
 		inputList = new ArrayList<String>();
 		outputList = new ArrayList<Line>();
 
@@ -523,11 +521,10 @@ public class Formatter extends JFrame implements ActionListener {
 						{
 							for(int i = 0; i < number; i++)
 							{
-								//outputList.add(new Line());
 								Line l = new Line();
 								l.setStr("\n");
-								//l.setAttr(lineSize, align, eqAlign, wrap, dSpace, col, indent, title);
-								currLine.append(l);
+								//currLine.append(l);
+								outputList.add(l);
 							}
 						}
 					}
