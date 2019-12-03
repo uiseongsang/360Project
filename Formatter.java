@@ -56,7 +56,7 @@ public class Formatter extends JFrame implements ActionListener {
 
 	boolean fileOpened;
 	boolean fileFormatted;
-	
+
 	boolean TEST = true;
 
 	enum Command
@@ -288,7 +288,7 @@ public class Formatter extends JFrame implements ActionListener {
 
 		frame.getContentPane().add(pnMain); // Adds Button to content pane of frame
 		frame.setVisible(true);
-		
+
 		if(TEST)
 		{
 			selectedFile = new File("inputText1.txt");
@@ -300,7 +300,7 @@ public class Formatter extends JFrame implements ActionListener {
 	public void run()
 	{
 		System.out.println("start");
-		
+
 		inputList = new ArrayList<String>();
 		outputList = new ArrayList<Line>();
 
@@ -344,12 +344,25 @@ public class Formatter extends JFrame implements ActionListener {
 
 			if(noSpace.length() > 0)
 			{
-				dash = noSpace.charAt(0) == '-';
+				if(noSpace.charAt(0) == '-')
+				{
+					if(noSpace.length()>1)
+					{
+						dash = true;	
+					}
+					else
+					{
+						errorList.add(new Error(1, lineCount));
+						dash = false;
+					}
+				}
+				else
+					dash = false;
 			}
 
 			if(dash)
 			{
-				text = noSpace;
+				text = noSpace.substring(1);
 				command = Command.zero;
 				String num = "";
 
@@ -369,7 +382,7 @@ public class Formatter extends JFrame implements ActionListener {
 						}
 						else
 						{
-							errorList.add(new Error(3, lineCount));
+							errorList.add(new Error(8, lineCount));
 						}
 					}
 					else if(c == 'l')
@@ -448,45 +461,44 @@ public class Formatter extends JFrame implements ActionListener {
 					}
 					else
 					{
-						errorList.add(new Error(1, lineCount));
+						//System.out.println("char: " +c);
+						errorList.add(new Error(3, lineCount));
 					}
-
 				}
 
 				int number = 0;
 				if(num.length() > 0)
 				{
 					number = Integer.parseInt(num);
-				}
 
-				if(number > 0)
-				{
-					if(command == Command.lineLen)
+					if(number > 0)
 					{
-						lineSize = number;
-					}
-					else if(command == Command.para)
-					{
-						indent = number;
-					}
-					else if(command == Command.blank)
-					{
-						for(int i = 0; i <= number; i++)
+						if(command == Command.lineLen)
 						{
-							//outputList.add(new Line());
-							Line l = new Line();
-							l.setStr("\n");
-							//l.setAttr(lineSize, align, eqAlign, wrap, dSpace, col, indent, title);
-							currLine.append(l);
+							lineSize = number;
 						}
-						System.out.print("yo");
+						else if(command == Command.para)
+						{
+							indent = number;
+						}
+						else if(command == Command.blank)
+						{
+							for(int i = 0; i <= number; i++)
+							{
+								//outputList.add(new Line());
+								Line l = new Line();
+								l.setStr("\n");
+								//l.setAttr(lineSize, align, eqAlign, wrap, dSpace, col, indent, title);
+								currLine.append(l);
+							}
+						}
 					}
-				}
-				else
-				{
-					if(command == Command.lineLen || command == Command.para)
+					else
 					{
-						errorList.add(new Error(3, lineCount));
+						if(command == Command.lineLen || command == Command.para)
+						{
+							errorList.add(new Error(3, lineCount));
+						}
 					}
 				}
 			}
@@ -501,18 +513,20 @@ public class Formatter extends JFrame implements ActionListener {
 				}
 				else
 				{
+					//for blank lines
 					if(currLine.getStr().length() == 0 && currLine.nextLine != null)
 					{
+						currLine.setAttr(lineSize, align, eqAlign, wrap, dSpace, col, indent, title);
 						outputList.add(currLine);
 						currLine = new Line();
 					}
-					
+
 					currLine.setAttr(lineSize, align, eqAlign, wrap, dSpace, col, indent, title);
 					currLine.setStr(text);
 					outputList.add(currLine);
 					currLine = new Line();
 				}
-				
+
 				indent = 0;
 				title = false;
 			}
@@ -520,11 +534,33 @@ public class Formatter extends JFrame implements ActionListener {
 			lineCount++;
 		}
 
+		if(currLine.getStr().length() == 0 && currLine.nextLine != null)
+		{
+			currLine.setAttr(lineSize, align, eqAlign, wrap, dSpace, col, indent, title);
+			outputList.add(currLine);
+		}
+
 		opText = "";
 		for(Line line : outputList)
 		{
 			opText += line.getLine(true);
 		}
+
+		ipText = "";
+		for(int i = 0; i < inputList.size(); i++)
+		{
+			ipText += inputList.get(i) + "\n";
+			boolean b = true;
+			for(int j = 0; j < errorList.size() && b; j++)
+			{
+				if(errorList.get(j).lineNumber == i+1)
+				{
+					ipText += errorList.get(j).toString();
+					b = false;
+				}
+			}
+		}
+
 		updateText();
 
 		try
