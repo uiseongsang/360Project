@@ -3,7 +3,7 @@
 public class Line {
 	private String origStr;
 	public Line nextLine;
-	private boolean equalAlign, wrap, doubleSpaced, titleFont, column;
+	private boolean wrap, doubleSpaced, titleFont, column;
 
 	private int indent, lineSize, align;
 
@@ -14,21 +14,40 @@ public class Line {
 		origStr = "";
 		align = 0;
 		lineSize = 80;
-		equalAlign = false;
 		wrap = false;
 		doubleSpaced = false;
 		titleFont = false;
 		indent = 0;
 	}
 
-	public String getLine(boolean main)
+	public String getLine(boolean bool)
 	{
-		if(origStr.contentEquals("indent"))
-			System.out.println(indent);
+		if(column)
+		{
+			titleFont = false;
+		}
+
+		if(titleFont)
+		{
+			align = 1;
+			wrap = false;
+		}
+
+		if(wrap)
+		{
+			if(column)
+			{
+				lineSize = 80;
+			}
+			align = 0;
+		}
+
+		boolean main = bool;
 		String str = origStr;
 		String front = "";
 		String end = "";
 
+		//left
 		if(align == 0)
 		{
 			for(int i = 0; i < indent; i++)
@@ -36,39 +55,166 @@ public class Line {
 				front += " ";
 			}
 		}
+		//center
+		else if(align == 1)
+		{
+			int empty = lineSize-str.length();
+			System.out.println(lineSize +" , " +str);
+			for(int i = 0; i < empty; i++)
+			{
+				if(i < empty/2)
+				{
+					end += " ";
+				}
+				else
+				{
+					front += " ";
+				}
+			}
+		}
+		//right
+		else if(align == 2)
+		{
+			int empty = lineSize-str.length();
 
-		str = front + str + end + getSpace();
+			for(int i = 0; i < empty; i++)
+			{
+				front += " ";
+			}
+		}
+		else if(align == 3)
+		{
+			
+		}
+
+		str = front + str + end;// + getSpace();
+
+		//System.out.println(main +" , " +origStr);
+		//title
+		if(titleFont)
+		{
+			String s = "";
+
+			for(int i = 0; i < str.length(); i++)
+			{
+				if(str.charAt(i) == ' ')
+				{
+					s += " ";
+				}
+				else
+				{
+					s += "-";
+				}
+			}
+
+			str += "\n" + s;
+			//main = false;
+		}
 
 		if(nextLine != null)
 		{
 			//System.out.println(getStr() +" : " +nextLine.getStr());
 			str += nextLine.getLine(false);
 		}
+
 		if(main)
 		{
-			//System.out.println("before: " +str);
-			int chars = 0;
-			
-
-			//System.out.print(lineSize);
-			for(int i = 0; i < str.length(); i++)
+			if(column)
 			{
-				//System.out.print(chars);
-				if(chars == lineSize)
+				lineSize = 80;
+
+				String temp = "";
+
+				for(int i = 0; i < str.length(); i++)
 				{
+					if(str.charAt(i) == '\n' && i > 0)
+					{
+						String space = "";
+
+						for(int j = i; j%35 != 0; j++)
+						{
+							space += " ";
+						}
+
+						str = str.substring(0, i) + space + str.substring(i+1);
+
+						i += space.length() + 1;
+					}
+				}
+
+				//divide and redistribute
+				String one = str.substring(0, str.length()/2);
+				String two = str.substring(str.length()/2);
+
+				int curr = 0;
+
+				while(curr < one.length())
+				{
+					String f = "";
+					String b = "";
+
+					for(int i = 0; i < 35; i++)
+					{
+						if(curr + i < one.length())
+						{
+							f += one.charAt(curr + i);
+						}
+
+						if(curr + i < two.length())
+						{
+							b += two.charAt(curr + i);
+						}
+					}
+
 					String nl = "\n";
 					if(doubleSpaced)
 						nl += "\n";
 
-					str = str.substring(0, i) + nl + str.substring(i);
+					temp += f +"          " +b +nl;
 
-					i += nl.length();
-					chars = 0;
+					curr += 35;
 				}
 
-				chars++;
+				//if(doubleSpaced)
+				//temp += "\n";
+				str = temp;
 			}
-			//System.out.println("after: " +str);
+			else if(!titleFont)
+			{
+				//System.out.println("before: " +str);
+				int chars = 0;
+
+				//System.out.print(lineSize);
+				for(int i = 0; i < str.length(); i++)
+				{
+					//System.out.print(chars);
+					if(chars == lineSize)
+					{
+						String nl = "\n";
+						if(doubleSpaced)
+							nl += "\n";
+
+						String p = str.substring(i);
+						if(p.equals("\n"))
+							p = " ";
+
+						str = str.substring(0, i) + nl + p;
+
+						i += nl.length();
+						chars = 0;
+					}
+
+					chars++;
+				}
+
+			}
+		}
+		if(nextLine == null)
+		{	
+			String nl = "\n";
+			if(doubleSpaced)
+				nl += "\n";
+			str += nl;
 		}
 
 		return str;
@@ -77,26 +223,15 @@ public class Line {
 	public String getSpace()
 	{
 		String s = "";
-		if(origStr.equals("\n"))
-		{
+		
+			s += "\n";
 
-		}
-		else
-		{
-			if(wrap)
-			{
-				s += " ";
-			}
-			else
+			if(doubleSpaced && origStr.length() > 0)
 			{
 				s += "\n";
-
-				if(doubleSpaced && origStr.length() > 0)
-				{
-					s += "\n";
-				}
 			}
-		}
+			//}
+		
 		return s;
 	}
 
@@ -122,11 +257,10 @@ public class Line {
 		nextLine = l;
 	}
 
-	public void setAttr(int l, int a, boolean e, boolean w, boolean d, boolean c, int i, boolean t)
+	public void setAttr(int l, int a, boolean w, boolean d, boolean c, int i, boolean t)
 	{
 		lineSize = l;
 		align = a;
-		equalAlign = e;
 		wrap = w;
 		doubleSpaced = d;
 		column = c;
@@ -137,5 +271,10 @@ public class Line {
 	public String getStr()
 	{
 		return origStr;
+	}
+
+	public boolean getWrap()
+	{
+		return wrap;
 	}
 }

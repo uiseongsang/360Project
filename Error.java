@@ -43,7 +43,7 @@ public class Error {
 		else if(this.code == 4) 
 		{returnString +="Incorrect syntax. Only +/- after wrap instruct format";}
 		else if(this.code == 5)
-		{returnString +="Incorrect File type";}
+		{returnString +="Incomplete Instruction. Command needs further arguments";}
 		else if(this.code == 6)
 		{returnString +="No more lines after command";}
 		else if (this.code == 7)

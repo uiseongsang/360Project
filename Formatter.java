@@ -329,7 +329,6 @@ public class Formatter extends JFrame implements ActionListener {
 
 		int lineSize = 80;
 		int align = 0;
-		boolean eqAlign = false;
 		boolean wrap = false;
 		boolean dSpace = false;
 		boolean col = false;
@@ -341,6 +340,7 @@ public class Formatter extends JFrame implements ActionListener {
 
 			//check if command
 			String noSpace = text.replaceAll("\\s", "");
+			dash = false;
 
 			if(noSpace.length() > 0)
 			{
@@ -353,7 +353,6 @@ public class Formatter extends JFrame implements ActionListener {
 					else
 					{
 						errorList.add(new Error(1, lineCount));
-						dash = false;
 					}
 				}
 				else
@@ -373,6 +372,11 @@ public class Formatter extends JFrame implements ActionListener {
 					if(c == 'n')
 					{
 						command = Command.lineLen;
+						
+						if(i == text.length()-1)
+						{
+							errorList.add(new Error(5, lineCount));
+						}
 					}
 					else if(command == Command.lineLen || command == Command.para || command == Command.blank)
 					{
@@ -399,11 +403,16 @@ public class Formatter extends JFrame implements ActionListener {
 					}
 					else if(c == 'e')
 					{
-						eqAlign = !eqAlign;
+						align = 3;
 					}
 					else if(c == 'w')
 					{
 						command = Command.wrap;
+						
+						if(i == text.length()-1)
+						{
+							errorList.add(new Error(5, lineCount));
+						}
 					}
 					else if(command == Command.wrap)
 					{
@@ -430,28 +439,57 @@ public class Formatter extends JFrame implements ActionListener {
 					}
 					else if(c == 't')
 					{
+						
 						title = true;
 					}
 					else if(c == 'p')
 					{
 						command = Command.para;
+						
+						if(i == text.length()-1)
+						{
+							errorList.add(new Error(5, lineCount));
+						}
 					}
 					else if(c == 'b')
 					{
 						command = Command.blank;
+						
+						if(i == text.length()-1)
+						{
+							errorList.add(new Error(5, lineCount));
+						}
 					}
 					else if(c == 'a')
 					{
 						command = Command.column;
+						
+						if(i == text.length()-1)
+						{
+							errorList.add(new Error(5, lineCount));
+						}
 					}
 					else if(command == Command.column)
 					{
 						if(c == '1')
 						{
+							if(currLine.getStr().length() == 0 && currLine.nextLine != null)
+							{
+								currLine.setAttr(lineSize, align, wrap, dSpace, col, indent, title);
+								outputList.add(currLine);
+								currLine = new Line();
+							}
 							col = false;
 						}
 						else if(c == '2')
 						{
+							if((currLine.getStr().length() > 0 || currLine.nextLine != null))
+							{
+								if(lineCount == 17) System.out.println(dSpace);
+								currLine.setAttr(lineSize, align, wrap, dSpace, col, indent, title);
+								outputList.add(currLine);
+								currLine = new Line();
+							}
 							col = true;
 						}
 						else
@@ -483,7 +521,7 @@ public class Formatter extends JFrame implements ActionListener {
 						}
 						else if(command == Command.blank)
 						{
-							for(int i = 0; i <= number; i++)
+							for(int i = 0; i < number; i++)
 							{
 								//outputList.add(new Line());
 								Line l = new Line();
@@ -504,11 +542,11 @@ public class Formatter extends JFrame implements ActionListener {
 			}
 			else
 			{
-				if(col || wrap)
+				if(col || (wrap && !title))
 				{
 					Line l = new Line();
 					l.setStr(text);
-					l.setAttr(lineSize, align, eqAlign, wrap, dSpace, col, indent, title);
+					l.setAttr(lineSize, align, wrap, dSpace, col, indent, title);
 					currLine.append(l);
 				}
 				else
@@ -516,12 +554,12 @@ public class Formatter extends JFrame implements ActionListener {
 					//for blank lines
 					if(currLine.getStr().length() == 0 && currLine.nextLine != null)
 					{
-						currLine.setAttr(lineSize, align, eqAlign, wrap, dSpace, col, indent, title);
+						currLine.setAttr(lineSize, align, wrap, dSpace, col, indent, title);
 						outputList.add(currLine);
 						currLine = new Line();
 					}
 
-					currLine.setAttr(lineSize, align, eqAlign, wrap, dSpace, col, indent, title);
+					currLine.setAttr(lineSize, align, wrap, dSpace, col, indent, title);
 					currLine.setStr(text);
 					outputList.add(currLine);
 					currLine = new Line();
@@ -536,7 +574,7 @@ public class Formatter extends JFrame implements ActionListener {
 
 		if(currLine.getStr().length() == 0 && currLine.nextLine != null)
 		{
-			currLine.setAttr(lineSize, align, eqAlign, wrap, dSpace, col, indent, title);
+			currLine.setAttr(lineSize, align, wrap, dSpace, col, indent, title);
 			outputList.add(currLine);
 		}
 
