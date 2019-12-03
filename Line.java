@@ -23,6 +23,8 @@ public class Line {
 
 	public String getLine(boolean main)
 	{
+		if(origStr.contentEquals("indent"))
+			System.out.println(indent);
 		String str = origStr;
 		String front = "";
 		String end = "";
@@ -39,17 +41,19 @@ public class Line {
 
 		if(nextLine != null)
 		{
-			System.out.println(getStr() +" : " +nextLine.getStr());
+			//System.out.println(getStr() +" : " +nextLine.getStr());
 			str += nextLine.getLine(false);
 		}
 		if(main)
 		{
-			System.out.println("before: " +str);
+			//System.out.println("before: " +str);
 			int chars = 0;
 			
 
+			//System.out.print(lineSize);
 			for(int i = 0; i < str.length(); i++)
 			{
+				//System.out.print(chars);
 				if(chars == lineSize)
 				{
 					String nl = "\n";
@@ -64,7 +68,7 @@ public class Line {
 
 				chars++;
 			}
-			System.out.println("after: " +str);
+			//System.out.println("after: " +str);
 		}
 
 		return str;
