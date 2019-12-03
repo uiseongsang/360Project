@@ -57,7 +57,7 @@ public class Formatter extends JFrame implements ActionListener {
 	boolean fileOpened;
 	boolean fileFormatted;
 
-	boolean TEST = true;
+	boolean TEST = false;
 
 	enum Command
 	{
@@ -258,7 +258,7 @@ public class Formatter extends JFrame implements ActionListener {
 		GridBagConstraints gbcOutput = new GridBagConstraints();
 		pnOutput.setLayout( gbOutput );
 
-		opText = "Select input file!";
+		opText = "Select input file and hit Format!";
 		taOutput = new JTextArea(2,10);
 		taOutput.setFont(lucida);
 		taOutput.setText(opText);
