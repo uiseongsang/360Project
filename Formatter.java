@@ -308,12 +308,14 @@ public class Formatter extends JFrame implements ActionListener {
 			ipText = "";
 			ipText += scan.useDelimiter("//Z").next();
 			updateText();
+			scan.close();
 
 			scan = new Scanner(selectedFile);
 			while(scan.hasNext())
 			{
 				inputList.add(scan.nextLine());
 			}
+			scan.close();
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
