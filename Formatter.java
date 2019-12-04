@@ -375,7 +375,7 @@ public class Formatter extends JFrame implements ActionListener {
 						
 						if(i == text.length()-1)
 						{
-							errorList.add(new Error(5, lineCount));
+							errorList.add(new Error(1, lineCount));
 						}
 					}
 					else if(command == Command.lineLen || command == Command.para || command == Command.blank)
@@ -411,7 +411,7 @@ public class Formatter extends JFrame implements ActionListener {
 						
 						if(i == text.length()-1)
 						{
-							errorList.add(new Error(5, lineCount));
+							errorList.add(new Error(1, lineCount));
 						}
 					}
 					else if(command == Command.wrap)
@@ -448,7 +448,7 @@ public class Formatter extends JFrame implements ActionListener {
 						
 						if(i == text.length()-1)
 						{
-							errorList.add(new Error(5, lineCount));
+							errorList.add(new Error(1, lineCount));
 						}
 					}
 					else if(c == 'b')
@@ -457,7 +457,7 @@ public class Formatter extends JFrame implements ActionListener {
 						
 						if(i == text.length()-1)
 						{
-							errorList.add(new Error(5, lineCount));
+							errorList.add(new Error(1, lineCount));
 						}
 					}
 					else if(c == 'a')
@@ -466,7 +466,7 @@ public class Formatter extends JFrame implements ActionListener {
 						
 						if(i == text.length()-1)
 						{
-							errorList.add(new Error(5, lineCount));
+							errorList.add(new Error(1, lineCount));
 						}
 					}
 					else if(command == Command.column)
@@ -500,7 +500,9 @@ public class Formatter extends JFrame implements ActionListener {
 					else
 					{
 						//System.out.println("char: " +c);
-						errorList.add(new Error(3, lineCount));
+						// should be error 1new Error
+						
+						errorList.add(new Error(1, lineCount));
 					}
 				}
 
